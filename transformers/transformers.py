@@ -1,4 +1,3 @@
-#%%
 from pyspark.sql.types import ArrayType, StringType
 from pyspark.sql.functions import udf, col
 import spacy

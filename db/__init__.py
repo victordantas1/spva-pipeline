@@ -1,1 +1,0 @@
-from resumes_pipeline.db.session import get_session

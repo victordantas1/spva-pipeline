@@ -1,5 +1,5 @@
 from pyspark.sql.functions import concat_ws, col
-from pyspark.ml import Pipeline
+from pyspark.ml import Pipeline, PipelineModel
 from pyspark.ml.feature import RegexTokenizer, StopWordsRemover
 from preprocessors import PreprocessorBase
 from transformers.transformers import TokenFilterChar, NerTransformer
@@ -24,3 +24,14 @@ class PreprocessorText(PreprocessorBase):
         df_text = self.pipeline.transform(df_text)
         df_text = df_text.withColumn(text_column, concat_ws(' ', col('tokens')))
         return df_text
+
+    def save_pipeline(self, path: str):
+        if self.pipeline_model:
+            print(f"Salvando a pipeline em: {path}")
+            self.pipeline_model.write().overwrite().save(path)
+        else:
+            raise Exception("Não há pipeline treinada para salvar.")
+
+    def load_pipeline(self, path: str):
+        print(f"Carregando a pipeline de: {path}")
+        self.pipeline_model = PipelineModel.load(path)
