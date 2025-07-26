@@ -1,0 +1,23 @@
+from pyspark.sql.functions import concat_ws
+from pyspark.ml import Pipeline
+from pyspark.ml.feature import RegexTokenizer, StopWordsRemover
+from preprocessors import PreprocessorBase
+from transformers.transformers import TokenFilterChar, NerTransformer
+
+
+class PreprocessorText(PreprocessorBase):
+    def __init__(self, config: dict):
+        self.config = config
+        self.tokenizer = RegexTokenizer(inputCol=config['text_column'], outputCol="tokens", pattern="[\\s+|\\W]")
+        self.stop_words_remover = StopWordsRemover(inputCol="tokens", outputCol="tokens_clean")
+        self.token_filter = TokenFilterChar(inputCol="tokens_clean", outputCol="tokens")
+        self.ner_transformer = NerTransformer(inputCol="tokens", outputCol="tokens_ner")
+        self.pipeline = Pipeline(stages=[self.tokenizer, self.stop_words_remover, self.token_filter, self.ner_transformer])
+
+    def fit_pipeline(self, jobs_df):
+        self.pipeline = self.pipeline.fit(jobs_df)
+
+    def process_df(self, df_text):
+        df_text = self.pipeline.transform(df_text)
+        df_text = df_text.withColumn(self.config['text_column'], concat_ws(' ', col('tokens')))
+        return df_text

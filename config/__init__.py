@@ -1,0 +1,1 @@
+from .config import config, auth_config
