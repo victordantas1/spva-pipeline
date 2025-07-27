@@ -13,6 +13,7 @@ config = {
     'minio_secret_key': os.environ.get('MINIO_SECRET_KEY'),
     'bucket_resumes': os.environ.get('BUCKET_RESUMES'),
     'text_column': os.environ.get('TEXT_COLUMN'),
+    'pipeline_model_path': os.environ.get('PIPELINE_MODEL_PATH'),
 }
 
 auth_config = {

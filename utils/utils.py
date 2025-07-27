@@ -1,4 +1,5 @@
-from pyspark.sql import SparkSession
+from pyspark.sql import SparkSession, DataFrame
+from .jobs_data import jobs_data
 
 class Utils:
     @staticmethod
@@ -10,3 +11,8 @@ class Utils:
             .config("spark.jars.packages", "org.apache.spark:spark-sql-kafka-0-10_2.12:3.5.1") \
             .getOrCreate()
         return spark
+
+    @staticmethod
+    def get_train_df(spark: SparkSession) -> DataFrame:
+        train_df = spark.createDataFrame(jobs_data)
+        return train_df

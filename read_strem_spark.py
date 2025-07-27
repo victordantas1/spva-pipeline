@@ -1,10 +1,10 @@
-import os
+from pyspark.sql.functions import from_json, col, get_json_object, concat_ws
 
-from pyspark.sql.functions import from_json, col, get_json_object
-
+from preprocessors import PreprocessorText
 from schemas.job_schema import debezium_payload_schema
 from utils import Utils
 from config import config
+from loguru import logger
 
 KAFKA_BOOTSTRAP_SERVERS = "localhost:9092"
 KAFKA_TOPICS = "servidor_spva.spva.job,servidor_spva.spva.user_app"
@@ -12,6 +12,7 @@ KAFKA_TOPICS = "servidor_spva.spva.job,servidor_spva.spva.user_app"
 def main():
     spark = Utils.get_spark_session(config=config)
 
+    logger.info('Starting Kafka Stream')
     df_kafka = spark \
         .readStream \
         .format("kafka") \
@@ -20,25 +21,40 @@ def main():
         .option("startingOffsets", "earliest") \
         .load()
 
+    logger.info('Casting value field')
     df_value_string = df_kafka.selectExpr("CAST(value AS STRING)")
 
+    logger.info('Extracting Payload')
     df_debezium_payload = df_value_string.select(
         get_json_object(col("value"), "$.payload").alias("payload")
     )
 
+    logger.info('Transform payload with schema')
     df_parsed = df_debezium_payload.withColumn(
         "parsed_payload", from_json(col("payload"), debezium_payload_schema)
     )
 
-    df_final = df_parsed.select(
+    logger.info('Select after field')
+    df = df_parsed.select(
         col("parsed_payload.op").alias("operacao"),
         col("parsed_payload.after.*")
     )
 
-    # 6. Escreva no console
-    query = df_final.writeStream \
+    logger.info('Preprocessing data')
+    df = df.select('title', 'description')
+
+    df = df.withColumn(config['text_column'], concat_ws(' ', col('title'), col('description')))
+
+    preprocessor = PreprocessorText(config)
+    preprocessor.load_pipeline(spark)
+
+    df_preprocessed = preprocessor.process_df(df)
+
+    logger.info('Writing data')
+    query = df_preprocessed.writeStream \
         .format("console") \
         .outputMode("append") \
+        .option("checkpointLocation", "C:/projects/spva-pipeline/spark_checkpoints") \
         .option("truncate", "false") \
         .start()
 
