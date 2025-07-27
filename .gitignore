@@ -397,6 +397,9 @@ cython_debug/
 *.iml
 *.crc
 *.json
+spark_checkpoints/
+pipeline_model/
+*.http
 
 # PyCharm
 #  JetBrains specific template is maintained in a separate JetBrains.gitignore that can
