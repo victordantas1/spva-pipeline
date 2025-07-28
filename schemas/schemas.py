@@ -23,13 +23,11 @@ job_schema = StructType([
     StructField("company", StringType(), True)
 ])
 
-debezium_payload_schema = StructType([
-    StructField("before", job_schema, True),
-    StructField("after", job_schema, True),
-    StructField("source", StructType([
-        StructField("table", StringType(), True)
-    ]), True),
-    StructField("op", StringType(), True),
-    StructField("ts_ms", LongType(), True),
-    StructField("transaction", transaction_schema, True)
+user_app_schema = StructType([
+    StructField("user_id", IntegerType(), True),
+    StructField("first_name", StringType(), True),
+    StructField("last_name", StringType(), True),
+    StructField("email", StringType(), True),
+    StructField("resume_path", StringType(), True),
 ])
+
