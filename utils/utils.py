@@ -1,4 +1,7 @@
 from pyspark.sql import SparkSession, DataFrame
+from pyspark.sql.types import StructField, LongType, StringType, StructType
+
+from schemas import job_schema, user_app_schema, source_schema, transaction_schema
 from .jobs_data import jobs_data
 
 class Utils:
@@ -17,3 +20,16 @@ class Utils:
     def get_train_df(spark: SparkSession) -> DataFrame:
         train_df = spark.createDataFrame(jobs_data)
         return train_df
+
+    @staticmethod
+    def get_schema(table_name: str) -> StructType:
+        debezium_payload_schema = StructType([
+            StructField("before", job_schema if table_name == 'job' else user_app_schema, True),
+            StructField("after", job_schema if table_name == 'job' else user_app_schema, True),
+            StructField("source", source_schema, True),
+            StructField("op", StringType(), True),
+            StructField("ts_ms", LongType(), True),
+            StructField("transaction", transaction_schema, True)
+        ])
+
+        return debezium_payload_schema
