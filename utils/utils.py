@@ -8,7 +8,8 @@ class Utils:
             .appName("EDA Resumes") \
             .master("local[*]")\
             .config("spark.driver.memory", "6g") \
-            .config("spark.jars.packages", "org.apache.spark:spark-sql-kafka-0-10_2.12:3.5.1") \
+            .config("spark.jars.packages", "org.apache.spark:spark-sql-kafka-0-10_2.12:3.5.1,org.mongodb.spark:mongo-spark-connector_2.12:10.5.0") \
+            .config("spark.mongo.write.connection.uri", config["mongo_uri"]) \
             .getOrCreate()
         return spark
 

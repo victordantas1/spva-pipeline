@@ -41,7 +41,6 @@ def main():
     )
 
     logger.info('Preprocessing data')
-    df = df.select('title', 'description')
 
     df = df.withColumn(config['text_column'], concat_ws(' ', col('title'), col('description')))
 
@@ -52,7 +51,9 @@ def main():
 
     logger.info('Writing data')
     query = df_preprocessed.writeStream \
-        .format("console") \
+        .format("mongodb") \
+        .option("spark.mongodb.database", "spva") \
+        .option("spark.mongodb.collection", "jobs") \
         .outputMode("append") \
         .option("checkpointLocation", "C:/projects/spva-pipeline/spark_checkpoints") \
         .option("truncate", "false") \
