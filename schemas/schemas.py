@@ -23,12 +23,6 @@ job_schema = StructType([
     StructField("company", StringType(), True)
 ])
 
-source_schema = StructType([
-    StructField("source", StructType([
-            StructField("table", StringType(), True)
-    ]), True),
-])
-
 user_app_schema = StructType([
     StructField("user_id", IntegerType(), True),
     StructField("first_name", StringType(), True),

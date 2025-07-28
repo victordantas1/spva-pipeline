@@ -14,5 +14,5 @@ config = {
     'mongo_uri': os.environ.get('MONGO_URI'),
     'kafka_host': os.environ.get('KAFKA_HOST'),
     'kafka_port': os.environ.get('KAFKA_PORT'),
-    'kafka_topics': os.environ.get('KAFKA_TOPICS'),
+    'kafka_topic': os.environ.get('KAFKA_TOPIC'),
 }

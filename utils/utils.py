@@ -26,10 +26,17 @@ class Utils:
         debezium_payload_schema = StructType([
             StructField("before", job_schema if table_name == 'job' else user_app_schema, True),
             StructField("after", job_schema if table_name == 'job' else user_app_schema, True),
-            StructField("source", source_schema, True),
+            StructField("source", StructType([
+                    StructField("table", StringType(), True)
+                ]), True),
             StructField("op", StringType(), True),
             StructField("ts_ms", LongType(), True),
             StructField("transaction", transaction_schema, True)
         ])
 
         return debezium_payload_schema
+
+    @staticmethod
+    def get_table(topic: str) -> str:
+        table_name = topic.split('.')[-1]
+        return table_name
