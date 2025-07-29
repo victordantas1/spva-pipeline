@@ -1,7 +1,8 @@
+from minio import Minio
 from pyspark.sql import SparkSession, DataFrame
 from pyspark.sql.types import StructField, LongType, StringType, StructType
 
-from schemas import job_schema, user_app_schema, source_schema, transaction_schema
+from schemas import job_schema, user_app_schema, transaction_schema
 from .jobs_data import jobs_data
 
 class Utils:
@@ -40,3 +41,13 @@ class Utils:
     def get_table(topic: str) -> str:
         table_name = topic.split('.')[-1]
         return table_name
+
+    @staticmethod
+    def get_minio_client(config: dict) -> Minio:
+        client = Minio(
+            config['minio_endpoint'],
+            access_key=config['minio_access_key'],
+            secret_key=config['minio_secret_key'],
+            secure=False
+        )
+        return client
