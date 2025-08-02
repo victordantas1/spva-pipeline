@@ -31,7 +31,7 @@ services:
       KAFKA_NUM_PARTITIONS: 1
 
   connect:
-    image: debezium/connect:2.1
+    build: ./debezium
     container_name: connect
     hostname: connect
     ports:

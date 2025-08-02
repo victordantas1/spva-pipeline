@@ -1,0 +1,41 @@
+###
+POST http://localhost:8083/connectors
+Content-Type: application/json
+Accept: application/json
+
+{
+  "name": "spva-connector",
+  "config": {
+    "connector.class": "io.debezium.connector.mysql.MySqlConnector",
+    "tasks.max": "1",
+
+    "topic.prefix": "servidor_spva",
+
+    "database.hostname": "host.docker.internal",
+    "database.port": "3306",
+    "database.user": "debezium_user",
+    "database.password": "senha123",
+    "database.server.id": "184054",
+    "database.allowPublicKeyRetrieval": "true",
+
+    "database.include.list": "spva",
+    "table.include.list": "spva.job,spva.user_app",
+    "include.schema.changes": "true",
+
+    "schema.history.internal.kafka.bootstrap.servers": "kafka:29092",
+    "schema.history.internal.kafka.topic": "schema-changes.spva",
+
+    "decimal.handling.mode": "double",
+
+    "transforms": "filter",
+    "transforms.filter.type": "io.debezium.transforms.Filter",
+    "transforms.filter.language": "jsr223.groovy",
+    "transforms.filter.condition": "!value.hasProperty('op') || ['c', 'u'].contains(value.op)"
+  }
+}
+###
+
+GET localhost:8083/connectors/spva-connector/status
+Accept: application/json
+
+###
