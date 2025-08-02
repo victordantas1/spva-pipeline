@@ -1,8 +1,3 @@
-from pyspark.sql.functions import from_json, col, get_json_object, concat_ws
-
-from preprocessors import PreprocessorText
-from service.resume_service import ResumeService
-
 from utils import Utils
 from config import config
 from loguru import logger
