@@ -38,7 +38,6 @@ def transform(batch_df, epoch_id):
     table = config['collection']
 
     if table == 'job':
-        batch_df = extract_payload(batch_df)
         batch_df = batch_df.withColumn(
             config['text_column'], concat_ws(' ', col('title'), col('description'))
         )

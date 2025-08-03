@@ -1,4 +1,4 @@
-from pyspark.sql.types import StructType, StructField, StringType, IntegerType, DateType, LongType
+from pyspark.sql.types import StructType, StructField, StringType, IntegerType, LongType, TimestampType
 
 transaction_schema = StructType([
     StructField("id", StringType(), True),
@@ -20,7 +20,8 @@ job_schema = StructType([
     StructField("contract_type", StringType(), True),
     StructField("schedule", StringType(), True),
     StructField("salary_range", StringType(), True),
-    StructField("company", StringType(), True)
+    StructField("company", StringType(), True),
+    StructField("update_date", TimestampType(), False),
 ])
 
 user_app_schema = StructType([
